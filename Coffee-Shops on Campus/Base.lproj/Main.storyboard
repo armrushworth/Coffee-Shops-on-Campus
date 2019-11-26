@@ -7,7 +7,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Coffee-Shops on Campus-->
         <scene sceneID="xOu-tP-CxS">
             <objects>
                 <viewController id="Xod-ZA-PwW" customClass="ViewController" customModule="Coffee_Shops_on_Campus" customModuleProvider="target" sceneMemberID="viewController">
@@ -41,7 +41,10 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <viewLayoutGuide key="safeArea" id="R6X-BA-Cir"/>
                     </view>
-                    <navigationItem key="navigationItem" id="L1J-na-H8i"/>
+                    <navigationItem key="navigationItem" title="Coffee-Shops on Campus" id="L1J-na-H8i"/>
+                    <connections>
+                        <outlet property="tableView" destination="wMK-7f-P58" id="Xc5-PV-MAw"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="R4M-MM-Vym" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
