@@ -7,29 +7,31 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		97F735D1238C3D2F00B0E00A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97F735D0238C3D2F00B0E00A /* AppDelegate.swift */; };
-		97F735D3238C3D2F00B0E00A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97F735D2238C3D2F00B0E00A /* SceneDelegate.swift */; };
-		97F735D5238C3D2F00B0E00A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97F735D4238C3D2F00B0E00A /* ViewController.swift */; };
-		97F735D8238C3D2F00B0E00A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97F735D6238C3D2F00B0E00A /* Main.storyboard */; };
-		97F735DB238C3D2F00B0E00A /* Coffee_Shops_on_Campus.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 97F735D9238C3D2F00B0E00A /* Coffee_Shops_on_Campus.xcdatamodeld */; };
-		97F735DD238C3D3200B0E00A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97F735DC238C3D3200B0E00A /* Assets.xcassets */; };
-		97F735E0238C3D3200B0E00A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97F735DE238C3D3200B0E00A /* LaunchScreen.storyboard */; };
+		4EB9E248238D599400D5908E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB9E247238D599400D5908E /* AppDelegate.swift */; };
+		4EB9E24A238D599400D5908E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB9E249238D599400D5908E /* SceneDelegate.swift */; };
+		4EB9E24F238D599400D5908E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4EB9E24D238D599400D5908E /* Main.storyboard */; };
+		4EB9E252238D599500D5908E /* Coffee_Shops_on_Campus.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4EB9E250238D599500D5908E /* Coffee_Shops_on_Campus.xcdatamodeld */; };
+		4EB9E254238D599600D5908E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4EB9E253238D599600D5908E /* Assets.xcassets */; };
+		4EB9E257238D599600D5908E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4EB9E255238D599600D5908E /* LaunchScreen.storyboard */; };
+		4EB9E263238D5D7100D5908E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB9E262238D5D7100D5908E /* ViewController.swift */; };
+		4EB9E265238D5D7C00D5908E /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB9E264238D5D7C00D5908E /* DetailViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		97F735CD238C3D2F00B0E00A /* Coffee-Shops on Campus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Coffee-Shops on Campus.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		97F735D0238C3D2F00B0E00A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		97F735D2238C3D2F00B0E00A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		97F735D4238C3D2F00B0E00A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		97F735D7238C3D2F00B0E00A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		97F735DA238C3D2F00B0E00A /* Coffee_Shops_on_Campus.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Coffee_Shops_on_Campus.xcdatamodel; sourceTree = "<group>"; };
-		97F735DC238C3D3200B0E00A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		97F735DF238C3D3200B0E00A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		97F735E1238C3D3200B0E00A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4EB9E244238D599400D5908E /* Coffee-Shops on Campus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Coffee-Shops on Campus.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4EB9E247238D599400D5908E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		4EB9E249238D599400D5908E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		4EB9E24E238D599400D5908E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		4EB9E251238D599500D5908E /* Coffee_Shops_on_Campus.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Coffee_Shops_on_Campus.xcdatamodel; sourceTree = "<group>"; };
+		4EB9E253238D599600D5908E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4EB9E256238D599600D5908E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		4EB9E258238D599600D5908E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4EB9E262238D5D7100D5908E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		4EB9E264238D5D7C00D5908E /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		97F735CA238C3D2F00B0E00A /* Frameworks */ = {
+		4EB9E241238D599400D5908E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -39,33 +41,34 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		97F735C4238C3D2F00B0E00A = {
+		4EB9E23B238D599400D5908E = {
 			isa = PBXGroup;
 			children = (
-				97F735CF238C3D2F00B0E00A /* Coffee-Shops on Campus */,
-				97F735CE238C3D2F00B0E00A /* Products */,
+				4EB9E246238D599400D5908E /* Coffee-Shops on Campus */,
+				4EB9E245238D599400D5908E /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		97F735CE238C3D2F00B0E00A /* Products */ = {
+		4EB9E245238D599400D5908E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				97F735CD238C3D2F00B0E00A /* Coffee-Shops on Campus.app */,
+				4EB9E244238D599400D5908E /* Coffee-Shops on Campus.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		97F735CF238C3D2F00B0E00A /* Coffee-Shops on Campus */ = {
+		4EB9E246238D599400D5908E /* Coffee-Shops on Campus */ = {
 			isa = PBXGroup;
 			children = (
-				97F735D0238C3D2F00B0E00A /* AppDelegate.swift */,
-				97F735D2238C3D2F00B0E00A /* SceneDelegate.swift */,
-				97F735D4238C3D2F00B0E00A /* ViewController.swift */,
-				97F735D6238C3D2F00B0E00A /* Main.storyboard */,
-				97F735DC238C3D3200B0E00A /* Assets.xcassets */,
-				97F735DE238C3D3200B0E00A /* LaunchScreen.storyboard */,
-				97F735E1238C3D3200B0E00A /* Info.plist */,
-				97F735D9238C3D2F00B0E00A /* Coffee_Shops_on_Campus.xcdatamodeld */,
+				4EB9E247238D599400D5908E /* AppDelegate.swift */,
+				4EB9E249238D599400D5908E /* SceneDelegate.swift */,
+				4EB9E24D238D599400D5908E /* Main.storyboard */,
+				4EB9E262238D5D7100D5908E /* ViewController.swift */,
+				4EB9E264238D5D7C00D5908E /* DetailViewController.swift */,
+				4EB9E253238D599600D5908E /* Assets.xcassets */,
+				4EB9E255238D599600D5908E /* LaunchScreen.storyboard */,
+				4EB9E258238D599600D5908E /* Info.plist */,
+				4EB9E250238D599500D5908E /* Coffee_Shops_on_Campus.xcdatamodeld */,
 			);
 			path = "Coffee-Shops on Campus";
 			sourceTree = "<group>";
@@ -73,13 +76,13 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		97F735CC238C3D2F00B0E00A /* Coffee-Shops on Campus */ = {
+		4EB9E243238D599400D5908E /* Coffee-Shops on Campus */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 97F735E4238C3D3200B0E00A /* Build configuration list for PBXNativeTarget "Coffee-Shops on Campus" */;
+			buildConfigurationList = 4EB9E25B238D599600D5908E /* Build configuration list for PBXNativeTarget "Coffee-Shops on Campus" */;
 			buildPhases = (
-				97F735C9238C3D2F00B0E00A /* Sources */,
-				97F735CA238C3D2F00B0E00A /* Frameworks */,
-				97F735CB238C3D2F00B0E00A /* Resources */,
+				4EB9E240238D599400D5908E /* Sources */,
+				4EB9E241238D599400D5908E /* Frameworks */,
+				4EB9E242238D599400D5908E /* Resources */,
 			);
 			buildRules = (
 			);
@@ -87,25 +90,25 @@
 			);
 			name = "Coffee-Shops on Campus";
 			productName = "Coffee-Shops on Campus";
-			productReference = 97F735CD238C3D2F00B0E00A /* Coffee-Shops on Campus.app */;
+			productReference = 4EB9E244238D599400D5908E /* Coffee-Shops on Campus.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		97F735C5238C3D2F00B0E00A /* Project object */ = {
+		4EB9E23C238D599400D5908E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1120;
-				LastUpgradeCheck = 1120;
+				LastSwiftUpdateCheck = 1110;
+				LastUpgradeCheck = 1110;
 				ORGANIZATIONNAME = "Rushworth, Ashley";
 				TargetAttributes = {
-					97F735CC238C3D2F00B0E00A = {
-						CreatedOnToolsVersion = 11.2.1;
+					4EB9E243238D599400D5908E = {
+						CreatedOnToolsVersion = 11.1;
 					};
 				};
 			};
-			buildConfigurationList = 97F735C8238C3D2F00B0E00A /* Build configuration list for PBXProject "Coffee-Shops on Campus" */;
+			buildConfigurationList = 4EB9E23F238D599400D5908E /* Build configuration list for PBXProject "Coffee-Shops on Campus" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -113,56 +116,57 @@
 				en,
 				Base,
 			);
-			mainGroup = 97F735C4238C3D2F00B0E00A;
-			productRefGroup = 97F735CE238C3D2F00B0E00A /* Products */;
+			mainGroup = 4EB9E23B238D599400D5908E;
+			productRefGroup = 4EB9E245238D599400D5908E /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				97F735CC238C3D2F00B0E00A /* Coffee-Shops on Campus */,
+				4EB9E243238D599400D5908E /* Coffee-Shops on Campus */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		97F735CB238C3D2F00B0E00A /* Resources */ = {
+		4EB9E242238D599400D5908E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				97F735E0238C3D3200B0E00A /* LaunchScreen.storyboard in Resources */,
-				97F735DD238C3D3200B0E00A /* Assets.xcassets in Resources */,
-				97F735D8238C3D2F00B0E00A /* Main.storyboard in Resources */,
+				4EB9E257238D599600D5908E /* LaunchScreen.storyboard in Resources */,
+				4EB9E254238D599600D5908E /* Assets.xcassets in Resources */,
+				4EB9E24F238D599400D5908E /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		97F735C9238C3D2F00B0E00A /* Sources */ = {
+		4EB9E240238D599400D5908E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				97F735D5238C3D2F00B0E00A /* ViewController.swift in Sources */,
-				97F735D1238C3D2F00B0E00A /* AppDelegate.swift in Sources */,
-				97F735D3238C3D2F00B0E00A /* SceneDelegate.swift in Sources */,
-				97F735DB238C3D2F00B0E00A /* Coffee_Shops_on_Campus.xcdatamodeld in Sources */,
+				4EB9E248238D599400D5908E /* AppDelegate.swift in Sources */,
+				4EB9E24A238D599400D5908E /* SceneDelegate.swift in Sources */,
+				4EB9E265238D5D7C00D5908E /* DetailViewController.swift in Sources */,
+				4EB9E263238D5D7100D5908E /* ViewController.swift in Sources */,
+				4EB9E252238D599500D5908E /* Coffee_Shops_on_Campus.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		97F735D6238C3D2F00B0E00A /* Main.storyboard */ = {
+		4EB9E24D238D599400D5908E /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				97F735D7238C3D2F00B0E00A /* Base */,
+				4EB9E24E238D599400D5908E /* Base */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
-		97F735DE238C3D3200B0E00A /* LaunchScreen.storyboard */ = {
+		4EB9E255238D599600D5908E /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				97F735DF238C3D3200B0E00A /* Base */,
+				4EB9E256238D599600D5908E /* Base */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -170,7 +174,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		97F735E2238C3D3200B0E00A /* Debug */ = {
+		4EB9E259238D599600D5908E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -220,7 +224,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -230,7 +234,7 @@
 			};
 			name = Debug;
 		};
-		97F735E3238C3D3200B0E00A /* Release */ = {
+		4EB9E25A238D599600D5908E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -274,7 +278,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -284,7 +288,7 @@
 			};
 			name = Release;
 		};
-		97F735E5238C3D3200B0E00A /* Debug */ = {
+		4EB9E25C238D599600D5908E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -301,7 +305,7 @@
 			};
 			name = Debug;
 		};
-		97F735E6238C3D3200B0E00A /* Release */ = {
+		4EB9E25D238D599600D5908E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -321,20 +325,20 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		97F735C8238C3D2F00B0E00A /* Build configuration list for PBXProject "Coffee-Shops on Campus" */ = {
+		4EB9E23F238D599400D5908E /* Build configuration list for PBXProject "Coffee-Shops on Campus" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				97F735E2238C3D3200B0E00A /* Debug */,
-				97F735E3238C3D3200B0E00A /* Release */,
+				4EB9E259238D599600D5908E /* Debug */,
+				4EB9E25A238D599600D5908E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		97F735E4238C3D3200B0E00A /* Build configuration list for PBXNativeTarget "Coffee-Shops on Campus" */ = {
+		4EB9E25B238D599600D5908E /* Build configuration list for PBXNativeTarget "Coffee-Shops on Campus" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				97F735E5238C3D3200B0E00A /* Debug */,
-				97F735E6238C3D3200B0E00A /* Release */,
+				4EB9E25C238D599600D5908E /* Debug */,
+				4EB9E25D238D599600D5908E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -342,17 +346,17 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		97F735D9238C3D2F00B0E00A /* Coffee_Shops_on_Campus.xcdatamodeld */ = {
+		4EB9E250238D599500D5908E /* Coffee_Shops_on_Campus.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				97F735DA238C3D2F00B0E00A /* Coffee_Shops_on_Campus.xcdatamodel */,
+				4EB9E251238D599500D5908E /* Coffee_Shops_on_Campus.xcdatamodel */,
 			);
-			currentVersion = 97F735DA238C3D2F00B0E00A /* Coffee_Shops_on_Campus.xcdatamodel */;
+			currentVersion = 4EB9E251238D599500D5908E /* Coffee_Shops_on_Campus.xcdatamodel */;
 			path = Coffee_Shops_on_Campus.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
 /* End XCVersionGroup section */
 	};
-	rootObject = 97F735C5238C3D2F00B0E00A /* Project object */;
+	rootObject = 4EB9E23C238D599400D5908E /* Project object */;
 }

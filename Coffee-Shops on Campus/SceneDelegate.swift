@@ -2,7 +2,7 @@
 //  SceneDelegate.swift
 //  Coffee-Shops on Campus
 //
-//  Created by user163251 on 11/25/19.
+//  Created by Rushworth, Ashley on 26/11/2019.
 //  Copyright © 2019 Rushworth, Ashley. All rights reserved.
 //
 
