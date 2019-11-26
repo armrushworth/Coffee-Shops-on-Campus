@@ -7,8 +7,10 @@
 //
 
 import UIKit
+import MapKit
+import CoreLocation
 
-class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, UISearchResultsUpdating {
+class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpdating, MKMapViewDelegate, CLLocationManagerDelegate, UITableViewDataSource, UITableViewDelegate {
     var selectedPerson = ("", "", "")
     var currentCell = -1
     
@@ -19,9 +21,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var mapView: MKMapView!
     
     var staff = [staffObject(name: "Phil", room: "A1.20", email: "phil@liverpool.ac.uk"), staffObject(name: "Terry", room: "S2.18", email: "trp@liverpool.ac.uk"), staffObject(name: "Valli", room: "A2.12", email: "v.tamma@liverpool.ac.uk"), staffObject(name: "Boris", room: "A1.15", email: "knoev@liverpool.ac.uk")]
     var filteredStaff = [staffObject]()
+    
+    // location manager
+    let locationManager = CLLocationManager()
     
     // search Bar
     let searchController = UISearchController(searchResultsController: nil)
@@ -53,6 +59,18 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         searchController.searchBar.placeholder = "Search for a coffee shop..."
         navigationItem.searchController = searchController
         definesPresentationContext = true
+        
+        // setup the map
+        locationManager.delegate = self as CLLocationManagerDelegate //we want messages about location
+        locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
+        locationManager.requestWhenInUseAuthorization() //ask the user for permission to get their location
+        locationManager.startUpdatingLocation() //and start receiving those messages (if we’re allowed to)
+    }
+    
+    // reload the table and map when the view appears
+    override func viewDidAppear(_ animated: Bool) {
+        tableView.reloadData()
+        mapView.reloadInputViews()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -73,5 +91,16 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     // determine if the user is filtering the table using the search bar
     func isFiltering() -> Bool {
         return searchController.isActive && !(searchController.searchBar.text?.isEmpty ?? true)
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) { let locationOfUser = locations[0] //get the first location (ignore any others)
+        let latitude = locationOfUser.coordinate.latitude
+        let longitude = locationOfUser.coordinate.longitude
+        let latDelta: CLLocationDegrees = 0.002
+        let lonDelta: CLLocationDegrees = 0.002
+        let span = MKCoordinateSpan(latitudeDelta: latDelta, longitudeDelta: lonDelta)
+        let location = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        let region = MKCoordinateRegion(center: location, span: span)
+        self.mapView.setRegion(region, animated: true)
     }
 }

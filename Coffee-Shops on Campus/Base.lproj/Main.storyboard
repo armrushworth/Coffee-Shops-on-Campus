@@ -15,16 +15,15 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="wMK-7f-P58">
-                                <rect key="frame" x="0.0" y="333" width="375" height="334"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="wMK-7f-P58">
+                                <rect key="frame" x="0.0" y="294" width="375" height="373"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="myCell" id="6Mx-s7-Unx">
-                                        <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="28" width="375" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="6Mx-s7-Unx" id="Oh0-oi-OZE">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
                                         <connections>
@@ -37,12 +36,28 @@
                                     <outlet property="delegate" destination="Xod-ZA-PwW" id="eQ3-Jc-olV"/>
                                 </connections>
                             </tableView>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="hybrid" translatesAutoresizingMaskIntoConstraints="NO" id="I6m-A1-57c">
+                                <rect key="frame" x="0.0" y="44" width="375" height="250"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="250" id="MTF-0f-yuf"/>
+                                </constraints>
+                            </mapView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="wMK-7f-P58" firstAttribute="leading" secondItem="R6X-BA-Cir" secondAttribute="leading" id="70V-5P-BYH"/>
+                            <constraint firstItem="wMK-7f-P58" firstAttribute="bottom" secondItem="R6X-BA-Cir" secondAttribute="bottom" id="DHu-Rs-euv"/>
+                            <constraint firstItem="wMK-7f-P58" firstAttribute="top" secondItem="I6m-A1-57c" secondAttribute="bottom" id="DYg-kz-pQm"/>
+                            <constraint firstItem="I6m-A1-57c" firstAttribute="trailing" secondItem="R6X-BA-Cir" secondAttribute="trailing" id="oZp-RV-Sbr"/>
+                            <constraint firstItem="I6m-A1-57c" firstAttribute="top" secondItem="R6X-BA-Cir" secondAttribute="top" id="tw5-3Q-Wce"/>
+                            <constraint firstItem="I6m-A1-57c" firstAttribute="leading" secondItem="R6X-BA-Cir" secondAttribute="leading" id="ueb-NR-ADg"/>
+                            <constraint firstItem="wMK-7f-P58" firstAttribute="trailing" secondItem="R6X-BA-Cir" secondAttribute="trailing" id="ugh-3W-ghz"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="R6X-BA-Cir"/>
                     </view>
                     <navigationItem key="navigationItem" title="Coffee-Shops on Campus" id="L1J-na-H8i"/>
                     <connections>
+                        <outlet property="mapView" destination="I6m-A1-57c" id="5ZI-dx-VmL"/>
                         <outlet property="tableView" destination="wMK-7f-P58" id="Xc5-PV-MAw"/>
                     </connections>
                 </viewController>
