@@ -20,6 +20,18 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
         let email: String
     }
     
+    struct coffeeShop: Decodable {
+        let id: String
+        let name: String
+        let latitude: String
+        let longitude: String
+    }
+    
+    struct coffeeOnCampus: Decodable {
+        let data: [coffeeShop]
+        let code: Int
+    }
+    
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var mapView: MKMapView!
     
@@ -65,6 +77,28 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
         locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
         locationManager.requestWhenInUseAuthorization() //ask the user for permission to get their location
         locationManager.startUpdatingLocation() //and start receiving those messages (if we’re allowed to)
+        
+         // decode JSON
+         if let url = URL(string: "https://dentistry.liverpool.ac.uk/_ajax/coffee/"){
+             let session = URLSession.shared
+             session.dataTask(with: url) { (data, response, err) in
+                 guard let jsonData = data else {
+                     return
+                 }
+                 do{
+                    let decoder = JSONDecoder()
+                    let shops = try decoder.decode(coffeeOnCampus.self, from: jsonData)
+                    var count = 0
+                    for aShop in shops.data {
+                        count += 1
+                        print("\(count) " + aShop.name)
+                    }
+                    print(shops.code)
+                 } catch let jsonErr {
+                     print("Error decoding JSON", jsonErr)
+                 }
+             }.resume()
+         }
     }
     
     // reload the table and map when the view appears

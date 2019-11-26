@@ -36,7 +36,7 @@
                                     <outlet property="delegate" destination="Xod-ZA-PwW" id="eQ3-Jc-olV"/>
                                 </connections>
                             </tableView>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="hybrid" translatesAutoresizingMaskIntoConstraints="NO" id="I6m-A1-57c">
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="hybrid" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="I6m-A1-57c">
                                 <rect key="frame" x="0.0" y="44" width="375" height="250"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="250" id="MTF-0f-yuf"/>
