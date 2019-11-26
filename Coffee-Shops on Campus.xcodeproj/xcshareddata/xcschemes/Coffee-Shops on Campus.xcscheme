@@ -51,7 +51,7 @@
          </BuildableReference>
       </BuildableProductRunnable>
       <LocationScenarioReference
-         identifier = "../../Coffee-Shops on Campus/AshtonBuilding.gpx"
+         identifier = "../../Coffee-Shops on Campus/AshtonCampusWalk.gpx"
          referenceType = "0">
       </LocationScenarioReference>
    </LaunchAction>

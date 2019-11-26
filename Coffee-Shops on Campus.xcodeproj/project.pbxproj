@@ -29,6 +29,7 @@
 		4EB9E262238D5D7100D5908E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		4EB9E264238D5D7C00D5908E /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		4EB9E267238D76DA00D5908E /* AshtonBuilding.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AshtonBuilding.gpx; sourceTree = "<group>"; };
+		4EB9E268238D77E800D5908E /* AshtonCampusWalk.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AshtonCampusWalk.gpx; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +67,7 @@
 				4EB9E24D238D599400D5908E /* Main.storyboard */,
 				4EB9E267238D76DA00D5908E /* AshtonBuilding.gpx */,
 				4EB9E262238D5D7100D5908E /* ViewController.swift */,
+				4EB9E268238D77E800D5908E /* AshtonCampusWalk.gpx */,
 				4EB9E264238D5D7C00D5908E /* DetailViewController.swift */,
 				4EB9E253238D599600D5908E /* Assets.xcassets */,
 				4EB9E255238D599600D5908E /* LaunchScreen.storyboard */,
