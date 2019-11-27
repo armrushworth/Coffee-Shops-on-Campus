@@ -10,28 +10,13 @@ import UIKit
 
 class DetailViewController: UIViewController {
 
-    var selectedPerson = ("", "", "")
+    var coffeeShop = ""
         
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        name.text = selectedPerson.0
-        room.text = selectedPerson.1
-        email.text = selectedPerson.2
+        id.text = coffeeShop
     }
     
-    @IBOutlet weak var name: UILabel!
-    @IBOutlet weak var room: UILabel!
-    @IBOutlet weak var email: UILabel!
-    
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+    @IBOutlet weak var id: UILabel!
 }

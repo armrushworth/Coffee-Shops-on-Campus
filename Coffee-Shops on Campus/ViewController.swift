@@ -11,86 +11,83 @@ import CoreLocation
 import MapKit
 import UIKit
 
+struct coffeeShop: Decodable {
+    let id: String
+    let name: String
+    let latitude: String
+    let longitude: String
+}
+
+struct coffeeOnCampus: Decodable {
+    let data: [coffeeShop]
+    let code: Int
+}
+
 class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpdating, MKMapViewDelegate, CLLocationManagerDelegate, UITableViewDataSource, UITableViewDelegate {
     
-    let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    var context: NSManagedObjectContext?
-    
-    var selectedPerson = ("", "", "")
-    var currentCell = -1
-    
-    struct coffeeShop: Decodable {
-        let id: String
-        let name: String
-        let latitude: String
-        let longitude: String
-    }
-    
-    struct coffeeOnCampus: Decodable {
-        let data: [coffeeShop]
-        let code: Int
-    }
-    
+    // outlets
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var mapView: MKMapView!
     
-    var coffeeShops = [coffeeShop]()
-    var filteredCoffeeShops = [coffeeShop]()
     // location manager
     let locationManager = CLLocationManager()
     
-    // search Bar
+    // search bar
     let searchController = UISearchController(searchResultsController: nil)
     
-    // determine the number of rows in each table section
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return isFiltering() ? filteredCoffeeShops.count : coffeeShops.count
-    }
+    // core data
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    var context: NSManagedObjectContext?
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "myCell")
-        cell.textLabel!.text = isFiltering() ? filteredCoffeeShops[indexPath.row].name : coffeeShops[indexPath.row].name
-        cell.accessoryType = UITableViewCell.AccessoryType.disclosureIndicator
-        return cell
-    }
+    // arrays for coffee shops and coffee shops after filtration
+    var coffeeShops = [coffeeShop]()
+    var filteredCoffeeShops = [coffeeShop]()
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        currentCell = indexPath.row
-        selectedPerson = (coffeeShops[currentCell].name, coffeeShops[currentCell].latitude, coffeeShops[currentCell].longitude)
-        performSegue(withIdentifier: "toDetailView", sender: nil)
-    }
+    // coffee shop selected to view further details of
+    var currentCell = -1
+    var selectedCoffeeShop = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // setup the search controller
+        // set up the search controller
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search for a coffee shop..."
         navigationItem.searchController = searchController
         definesPresentationContext = true
         
-        // setup the map
+        // set up the map
         locationManager.delegate = self as CLLocationManagerDelegate //we want messages about location
         locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
         locationManager.requestWhenInUseAuthorization() //ask the user for permission to get their location
         locationManager.startUpdatingLocation() //and start receiving those messages (if we’re allowed to)
         
+        // populate coffee shops array
         context = appDelegate.persistentContainer.viewContext
-        
-         // decode JSON
-         if let url = URL(string: "https://dentistry.liverpool.ac.uk/_ajax/coffee/"){
-             let session = URLSession.shared
-             session.dataTask(with: url) { (data, response, err) in
-                 guard let jsonData = data else {
-                     return
-                 }
-                 do {
+        populateCoffeeShops()
+    }
+    
+    func populateCoffeeShops() {
+        if let url = URL(string: "https://dentistry.liverpool.ac.uk/_ajax/coffee/"){
+            let session = URLSession.shared
+            session.dataTask(with: url) { (data, response, err) in
+                guard let jsonData = data else {
+                    return
+                }
+                do {
+                    // decode JSON
                     let decoder = JSONDecoder()
                     let shops = try decoder.decode(coffeeOnCampus.self, from: jsonData)
+                    
+                    // delete existing coffee shops core data
                     self.deleteAllData(entity: "CoffeeShops")
+                    
                     for aShop in shops.data {
+                        // add coffee shops to array
                         self.coffeeShops.append(aShop)
+                        
+                        // add coffee shops to core data
                         let entity = NSEntityDescription.entity(forEntityName: "CoffeeShops", in: self.context!)
                         let newItem = NSManagedObject(entity: entity!, insertInto: self.context)
                         newItem.setValue(aShop.id, forKey: "id")
@@ -100,26 +97,26 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
                         do {
                             try self.context!.save()
                         } catch {
-                            print("Failed saving")
+                            print("Error saving coffee shops to core data")
                         }
                     }
-                 } catch let jsonErr {
-                     print("Error decoding JSON", jsonErr)
+                } catch let jsonErr {
+                    print("Error decoding JSON", jsonErr)
                     
+                    // retrieve coffee shops from core data if unable to decode JSON
                     do {
                         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "CoffeeShops")
                         request.returnsObjectsAsFaults = false
-                        
                         let result = try self.context!.fetch(request)
                         for data in result as! [NSManagedObject] {
                             self.coffeeShops.append(coffeeShop(id: data.value(forKey: "id") as! String, name: data.value(forKey: "name") as! String, latitude: data.value(forKey: "latitude") as! String, longitude: data.value(forKey: "longitude") as! String))
                         }
                     } catch {
-                        print("Failed")
+                        print("Error retrieving coffee shops from core data")
                     }
-                 }
-             }.resume()
-         }
+                }
+            }.resume()
+        }
     }
     
     // delete all records for a given entity
@@ -142,10 +139,28 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
         mapView.reloadInputViews()
     }
     
+    // determine the number of rows in each table section
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return isFiltering() ? filteredCoffeeShops.count : coffeeShops.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "myCell")
+        cell.textLabel!.text = isFiltering() ? filteredCoffeeShops[indexPath.row].name : coffeeShops[indexPath.row].name
+        cell.accessoryType = UITableViewCell.AccessoryType.disclosureIndicator
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        currentCell = indexPath.row
+        selectedCoffeeShop = coffeeShops[currentCell].id
+        performSegue(withIdentifier: "toDetailView", sender: nil)
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toDetailView" {
             let secondViewController = segue.destination as! DetailViewController
-            secondViewController.selectedPerson = selectedPerson
+            secondViewController.coffeeShop = selectedCoffeeShop
         }
     }
     
