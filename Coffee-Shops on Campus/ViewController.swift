@@ -6,19 +6,18 @@
 //  Copyright © 2019 Rushworth, Ashley. All rights reserved.
 //
 
-import UIKit
-import MapKit
+import CoreData
 import CoreLocation
+import MapKit
+import UIKit
 
 class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpdating, MKMapViewDelegate, CLLocationManagerDelegate, UITableViewDataSource, UITableViewDelegate {
+    
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    var context: NSManagedObjectContext?
+    
     var selectedPerson = ("", "", "")
     var currentCell = -1
-    
-    struct staffObject: Decodable {
-        let name: String
-        let room: String
-        let email: String
-    }
     
     struct coffeeShop: Decodable {
         let id: String
@@ -35,9 +34,8 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var mapView: MKMapView!
     
-    var staff = [staffObject(name: "Phil", room: "A1.20", email: "phil@liverpool.ac.uk"), staffObject(name: "Terry", room: "S2.18", email: "trp@liverpool.ac.uk"), staffObject(name: "Valli", room: "A2.12", email: "v.tamma@liverpool.ac.uk"), staffObject(name: "Boris", room: "A1.15", email: "knoev@liverpool.ac.uk")]
-    var filteredStaff = [staffObject]()
-    
+    var coffeeShops = [coffeeShop]()
+    var filteredCoffeeShops = [coffeeShop]()
     // location manager
     let locationManager = CLLocationManager()
     
@@ -46,19 +44,19 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
     
     // determine the number of rows in each table section
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return isFiltering() ? filteredStaff.count : staff.count
+        return isFiltering() ? filteredCoffeeShops.count : coffeeShops.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "myCell")
-        cell.textLabel!.text = isFiltering() ? filteredStaff[indexPath.row].name : staff[indexPath.row].name
+        cell.textLabel!.text = isFiltering() ? filteredCoffeeShops[indexPath.row].name : coffeeShops[indexPath.row].name
         cell.accessoryType = UITableViewCell.AccessoryType.disclosureIndicator
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         currentCell = indexPath.row
-        selectedPerson = (staff[currentCell].name, staff[currentCell].room, staff[currentCell].email)
+        selectedPerson = (coffeeShops[currentCell].name, coffeeShops[currentCell].latitude, coffeeShops[currentCell].longitude)
         performSegue(withIdentifier: "toDetailView", sender: nil)
     }
     
@@ -78,6 +76,8 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
         locationManager.requestWhenInUseAuthorization() //ask the user for permission to get their location
         locationManager.startUpdatingLocation() //and start receiving those messages (if we’re allowed to)
         
+        context = appDelegate.persistentContainer.viewContext
+        
          // decode JSON
          if let url = URL(string: "https://dentistry.liverpool.ac.uk/_ajax/coffee/"){
              let session = URLSession.shared
@@ -85,20 +85,55 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
                  guard let jsonData = data else {
                      return
                  }
-                 do{
+                 do {
                     let decoder = JSONDecoder()
                     let shops = try decoder.decode(coffeeOnCampus.self, from: jsonData)
-                    var count = 0
+                    self.deleteAllData(entity: "CoffeeShops")
                     for aShop in shops.data {
-                        count += 1
-                        print("\(count) " + aShop.name)
+                        self.coffeeShops.append(aShop)
+                        let entity = NSEntityDescription.entity(forEntityName: "CoffeeShops", in: self.context!)
+                        let newItem = NSManagedObject(entity: entity!, insertInto: self.context)
+                        newItem.setValue(aShop.id, forKey: "id")
+                        newItem.setValue(aShop.name, forKey: "name")
+                        newItem.setValue(aShop.latitude, forKey: "latitude")
+                        newItem.setValue(aShop.longitude, forKey: "longitude")
+                        do {
+                            try self.context!.save()
+                        } catch {
+                            print("Failed saving")
+                        }
                     }
-                    print(shops.code)
                  } catch let jsonErr {
                      print("Error decoding JSON", jsonErr)
+                    
+                    do {
+                        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "CoffeeShops")
+                        request.returnsObjectsAsFaults = false
+                        
+                        let result = try self.context!.fetch(request)
+                        for data in result as! [NSManagedObject] {
+                            self.coffeeShops.append(coffeeShop(id: data.value(forKey: "id") as! String, name: data.value(forKey: "name") as! String, latitude: data.value(forKey: "latitude") as! String, longitude: data.value(forKey: "longitude") as! String))
+                        }
+                    } catch {
+                        print("Failed")
+                    }
                  }
              }.resume()
          }
+    }
+    
+    // delete all records for a given entity
+    func deleteAllData(entity: String) {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
+        do {
+            let objects = try context!.fetch(fetchRequest)
+            for object in objects {
+                context!.delete(object as! NSManagedObject)
+            }
+            try context!.save()
+        } catch _ {
+            print("Failed deleting")
+        }
     }
     
     // reload the table and map when the view appears
@@ -116,8 +151,8 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
     
     // filter coffee shops by the string entered in the search bar
     func updateSearchResults(for searchController: UISearchController) {
-        filteredStaff = staff.filter({( staff : staffObject) -> Bool in
-            return staff.name.lowercased().contains(searchController.searchBar.text!.lowercased())
+        filteredCoffeeShops = coffeeShops.filter({( coffeeShop : coffeeShop) -> Bool in
+            return coffeeShop.name.lowercased().contains(searchController.searchBar.text!.lowercased())
         })
         tableView.reloadData()
     }
