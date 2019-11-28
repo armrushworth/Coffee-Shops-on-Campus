@@ -16,6 +16,14 @@ struct coffeeShop: Decodable {
     let name: String
     let latitude: String
     let longitude: String
+    
+    var location: CLLocation {
+        return CLLocation(latitude: CLLocationDegrees(self.latitude)!, longitude: CLLocationDegrees(self.longitude)!)
+    }
+    
+    func distance(to location: CLLocation) -> CLLocationDistance {
+        return location.distance(from: self.location)
+    }
 }
 
 struct coffeeOnCampus: Decodable {
@@ -31,6 +39,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
     
     // location manager
     let locationManager = CLLocationManager()
+    var locationOfUser = CLLocation()
     
     // search bar
     let searchController = UISearchController(searchResultsController: nil)
@@ -57,19 +66,15 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
         navigationItem.searchController = searchController
         definesPresentationContext = true
         
-        // set up the map
-        locationManager.delegate = self as CLLocationManagerDelegate //we want messages about location
-        locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
-        locationManager.requestWhenInUseAuthorization() //ask the user for permission to get their location
-        locationManager.startUpdatingLocation() //and start receiving those messages (if we’re allowed to)
-        
         // populate coffee shops array
         context = appDelegate.persistentContainer.viewContext
-        populateCoffeeShops()
+        populateCoffeeShops() {
+            self.loadMap()
+        }
     }
     
-    func populateCoffeeShops() {
-        if let url = URL(string: "https://dentistry.liverpool.ac.uk/_ajax/coffee/"){
+    func populateCoffeeShops(callback: @escaping () -> Void) {
+        if let url = URL(string: "https://dentistry.liverpool.ac.uk/_ajax/coffee/") {
             let session = URLSession.shared
             session.dataTask(with: url) { (data, response, err) in
                 guard let jsonData = data else {
@@ -100,6 +105,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
                             print("Error saving coffee shops to core data")
                         }
                     }
+                    self.sortCoffeeShops()
                 } catch let jsonErr {
                     print("Error decoding JSON", jsonErr)
                     
@@ -115,6 +121,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
                         print("Error retrieving coffee shops from core data")
                     }
                 }
+                callback()
             }.resume()
         }
     }
@@ -130,6 +137,26 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
             try context!.save()
         } catch _ {
             print("Failed deleting")
+        }
+    }
+    
+    func loadMap() {
+        // set up the map
+        locationManager.delegate = self as CLLocationManagerDelegate // we want messages about location
+        locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
+        locationManager.requestWhenInUseAuthorization() // ask the user for permission to get their location
+        locationManager.startUpdatingLocation() // and start receiving those messages (if we’re allowed to)
+       
+        // add an annotation onto the map for each coffee shop
+        for aShop in self.coffeeShops {
+            guard let latitude = Double(aShop.latitude) else { return }
+            guard let longitude = Double(aShop.longitude) else { return }
+            let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = coordinate
+            annotation.title = aShop.name
+            self.mapView.addAnnotation(annotation)
         }
     }
     
@@ -177,7 +204,19 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
         return searchController.isActive && !(searchController.searchBar.text?.isEmpty ?? true)
     }
     
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) { let locationOfUser = locations[0] //get the first location (ignore any others)
+    // sort coffee shops in order of proximity to the location of the user
+    func sortCoffeeShops(){
+        DispatchQueue.main.async {
+            self.coffeeShops.sort(by: {
+                $0.distance(to: self.locationOfUser) < $1.distance(to: self.locationOfUser)
+            })
+            self.tableView.reloadData()
+        }
+    }
+    
+    // get the updated location of the user
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        locationOfUser = locations[0] // get the first location (ignore any others)
         let latitude = locationOfUser.coordinate.latitude
         let longitude = locationOfUser.coordinate.longitude
         let latDelta: CLLocationDegrees = 0.002
@@ -186,5 +225,6 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
         let location = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
         let region = MKCoordinateRegion(center: location, span: span)
         self.mapView.setRegion(region, animated: true)
+        sortCoffeeShops()
     }
 }
