@@ -44,13 +44,21 @@ struct coffeeShopDetails: Decodable {
     let url: String
     let photo_url: String?
     let phone_number: String?
-    let opening_hours: [String: String]
+    let monday: String?
+    let tuesday: String?
+    let wednesday: String?
+    let thursday: String?
+    let friday: String?
     
     init(url: String, photo_url: String? = nil, phone_number: String? = nil, opening_hours: [String: String]) {
         self.url = url
         self.photo_url = url
         self.phone_number = phone_number
-        self.opening_hours = opening_hours
+        self.monday = opening_hours["monday"]
+        self.tuesday = opening_hours["tuesday"]
+        self.wednesday = opening_hours["wednesday"]
+        self.thursday = opening_hours["thursday"]
+        self.friday = opening_hours["friday"]
     }
 }
 
@@ -113,24 +121,25 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
                     let decoder = JSONDecoder()
                     let shops = try decoder.decode(coffeeOnCampus.self, from: jsonData)
                     
-                    // delete existing coffee shops core data
-                    self.deleteAllData(entity: "CoffeeShops")
-                    
                     for aShop in shops.data {
                         // add coffee shops to array
                         self.coffeeShops.append(aShop)
                         
-                        // add coffee shops to core data
-                        let entity = NSEntityDescription.entity(forEntityName: "CoffeeShops", in: self.context!)
-                        let newItem = NSManagedObject(entity: entity!, insertInto: self.context)
-                        newItem.setValue(aShop.id, forKey: "id")
-                        newItem.setValue(aShop.name, forKey: "name")
-                        newItem.setValue(aShop.latitude, forKey: "latitude")
-                        newItem.setValue(aShop.longitude, forKey: "longitude")
-                        do {
-                            try self.context!.save()
-                        } catch {
-                            print("Error saving coffee shops to core data")
+                        // add coffee shops to core data on first run
+                        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "CoffeeShops")
+                        let count = try self.context!.count(for: request)
+                        if (count == 0) {
+                            let entity = NSEntityDescription.entity(forEntityName: "CoffeeShops", in: self.context!)
+                            let newItem = NSManagedObject(entity: entity!, insertInto: self.context)
+                            newItem.setValue(aShop.id, forKey: "id")
+                            newItem.setValue(aShop.name, forKey: "name")
+                            newItem.setValue(aShop.latitude, forKey: "latitude")
+                            newItem.setValue(aShop.longitude, forKey: "longitude")
+                            do {
+                                try self.context!.save()
+                            } catch {
+                                print("Error saving coffee shops to core data")
+                            }
                         }
                     }
                     self.sortCoffeeShops()
@@ -151,20 +160,6 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
                 }
                 callback()
             }.resume()
-        }
-    }
-    
-    // delete all records for a given entity
-    func deleteAllData(entity: String) {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
-        do {
-            let objects = try context!.fetch(fetchRequest)
-            for object in objects {
-                context!.delete(object as! NSManagedObject)
-            }
-            try context!.save()
-        } catch _ {
-            print("Failed deleting")
         }
     }
     
