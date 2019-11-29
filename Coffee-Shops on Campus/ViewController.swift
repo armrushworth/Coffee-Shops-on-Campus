@@ -16,6 +16,15 @@ struct coffeeShop: Decodable {
     let name: String
     let latitude: String
     let longitude: String
+    var details: coffeeShopDetails?
+    
+    init(id: String, name: String, latitude: String, longitude: String, details: coffeeShopDetails? = nil) {
+        self.id = id
+        self.name = name
+        self.latitude = latitude
+        self.longitude = longitude
+        self.details = details
+    }
     
     var location: CLLocation {
         return CLLocation(latitude: CLLocationDegrees(self.latitude)!, longitude: CLLocationDegrees(self.longitude)!)
@@ -28,6 +37,25 @@ struct coffeeShop: Decodable {
 
 struct coffeeOnCampus: Decodable {
     let data: [coffeeShop]
+    let code: Int
+}
+
+struct coffeeShopDetails: Decodable {
+    let url: String
+    let photo_url: String?
+    let phone_number: String?
+    let opening_hours: [String: String]
+    
+    init(url: String, photo_url: String? = nil, phone_number: String? = nil, opening_hours: [String: String]) {
+        self.url = url
+        self.photo_url = url
+        self.phone_number = phone_number
+        self.opening_hours = opening_hours
+    }
+}
+
+struct coffeeOnCampusDetails: Decodable {
+    let data: coffeeShopDetails
     let code: Int
 }
 
@@ -54,7 +82,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
     
     // coffee shop selected to view further details of
     var currentCell = -1
-    var selectedCoffeeShop = ""
+    var selectedCoffeeShopId = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -180,14 +208,14 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         currentCell = indexPath.row
-        selectedCoffeeShop = coffeeShops[currentCell].id
+        selectedCoffeeShopId = coffeeShops[currentCell].id
         performSegue(withIdentifier: "toDetailView", sender: nil)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toDetailView" {
             let secondViewController = segue.destination as! DetailViewController
-            secondViewController.coffeeShop = selectedCoffeeShop
+            secondViewController.aShop = coffeeShops.first(where: { $0.id == selectedCoffeeShopId })
         }
     }
     
