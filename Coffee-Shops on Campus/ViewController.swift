@@ -44,27 +44,20 @@ struct coffeeShopDetails: Decodable {
     let url: String
     let photo_url: String?
     let phone_number: String?
-    let monday: String?
-    let tuesday: String?
-    let wednesday: String?
-    let thursday: String?
-    let friday: String?
-    
-    init(url: String, photo_url: String? = nil, phone_number: String? = nil, opening_hours: [String: String]) {
-        self.url = url
-        self.photo_url = url
-        self.phone_number = phone_number
-        self.monday = opening_hours["monday"]
-        self.tuesday = opening_hours["tuesday"]
-        self.wednesday = opening_hours["wednesday"]
-        self.thursday = opening_hours["thursday"]
-        self.friday = opening_hours["friday"]
-    }
+    let opening_hours: openingHours
 }
 
 struct coffeeOnCampusDetails: Decodable {
     let data: coffeeShopDetails
     let code: Int
+}
+
+struct openingHours: Decodable {
+    let monday: String?
+    let tuesday: String?
+    let wednesday: String?
+    let thursday: String?
+    let friday: String?
 }
 
 class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpdating, MKMapViewDelegate, CLLocationManagerDelegate, UITableViewDataSource, UITableViewDelegate {
@@ -195,8 +188,10 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "myCell")
-        cell.textLabel!.text = isFiltering() ? filteredCoffeeShops[indexPath.row].name : coffeeShops[indexPath.row].name
+        let cell = UITableViewCell(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "myCell")
+        cell.textLabel?.text = isFiltering() ? filteredCoffeeShops[indexPath.row].name : coffeeShops[indexPath.row].name
+        let distance = isFiltering() ? filteredCoffeeShops[indexPath.row].distance(to: locationOfUser) : coffeeShops[indexPath.row].distance(to: locationOfUser)
+        cell.detailTextLabel?.text = "\(String(format:"%.0f", distance)) metres away"
         cell.accessoryType = UITableViewCell.AccessoryType.disclosureIndicator
         return cell
     }

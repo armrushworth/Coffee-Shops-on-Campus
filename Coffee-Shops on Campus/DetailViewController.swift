@@ -11,7 +11,15 @@ import UIKit
 
 class DetailViewController: UIViewController {
 
-    @IBOutlet weak var id: UILabel!
+    @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var openingTimesLabel: UILabel!
+    @IBOutlet weak var websiteButton: UIButton!
+    @IBAction func websiteButton(_ sender: Any) {
+        if let url = URL(string: aShop?.details?.url ?? "") {
+            UIApplication.shared.open(url)
+        }
+    }
     
     // core data
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -26,13 +34,25 @@ class DetailViewController: UIViewController {
         context = appDelegate.persistentContainer.viewContext
         populateCoffeeShopDetails() {
             DispatchQueue.main.async {
-                self.id.text = self.aShop?.details?.url
+                if (self.aShop?.details?.photo_url?.isEmpty ?? true) {
+                    self.imageView.image = UIImage(named: "no-image")
+                } else {
+                    let imageUrl = URL(string: self.aShop?.details?.photo_url ?? "")!
+                    let imageData = try! Data(contentsOf: imageUrl)
+                    self.imageView.image = UIImage(data: imageData)
+                }
+                
+                self.nameLabel.text = self.aShop?.name
+                self.openingTimesLabel.text = "Monday: \(self.aShop?.details?.opening_hours.monday ?? "")\nTuesday: \(self.aShop?.details?.opening_hours.tuesday ?? "")\nWednesday: \(self.aShop?.details?.opening_hours.wednesday ?? "")\nThursday: \(self.aShop?.details?.opening_hours.thursday ?? "")\nFriday: \(self.aShop?.details?.opening_hours.friday ?? "")"
+                if (!(self.aShop?.details?.url.isEmpty ?? true)) {
+                    self.websiteButton.isHidden = false
+                }
             }
         }
     }
     
     func populateCoffeeShopDetails(callback: @escaping () -> Void) {
-        if let url = URL(string: "https://dentistry.liverpool.ac.uk/_ajax/cofee/info/?id=\(aShop!.id)") {
+        if let url = URL(string: "https://dentistry.liverpool.ac.uk/_ajax/coffee/info/?id=\(aShop!.id)") {
             let session = URLSession.shared
             session.dataTask(with: url) { (data, response, err) in
                 guard let jsonData = data else {
@@ -55,11 +75,11 @@ class DetailViewController: UIViewController {
                             managedObject.setValue(aShopDetails.data.url, forKey: "url")
                             managedObject.setValue(aShopDetails.data.photo_url, forKey: "photo_url")
                             managedObject.setValue(aShopDetails.data.phone_number, forKey: "phone_number")
-                            managedObject.setValue(aShopDetails.data.monday, forKey: "monday")
-                            managedObject.setValue(aShopDetails.data.tuesday, forKey: "tuesday")
-                            managedObject.setValue(aShopDetails.data.wednesday, forKey: "wednesday")
-                            managedObject.setValue(aShopDetails.data.thursday, forKey: "thursday")
-                            managedObject.setValue(aShopDetails.data.friday, forKey: "friday")
+                            managedObject.setValue(aShopDetails.data.opening_hours.monday, forKey: "monday")
+                            managedObject.setValue(aShopDetails.data.opening_hours.tuesday, forKey: "tuesday")
+                            managedObject.setValue(aShopDetails.data.opening_hours.wednesday, forKey: "wednesday")
+                            managedObject.setValue(aShopDetails.data.opening_hours.thursday, forKey: "thursday")
+                            managedObject.setValue(aShopDetails.data.opening_hours.friday, forKey: "friday")
 
                             do {
                                 try self.context!.save()
@@ -82,13 +102,13 @@ class DetailViewController: UIViewController {
                                 url: data.value(forKey: "url") as! String,
                                 photo_url: data.value(forKey: "photo_url") as? String,
                                 phone_number: data.value(forKey: "phone_number") as? String,
-                                opening_hours: [
-                                    "monday": data.value(forKey: "monday") as! String,
-                                    "tuesday": data.value(forKey: "tuesday") as! String,
-                                    "wednesday": data.value(forKey: "wednesday") as! String,
-                                    "thursday": data.value(forKey: "thursday") as! String,
-                                    "friday": data.value(forKey: "friday") as! String
-                                ]
+                                opening_hours: openingHours(
+                                    monday: data.value(forKey: "monday") as? String,
+                                    tuesday: data.value(forKey: "tuesday") as? String,
+                                    wednesday: data.value(forKey: "wednesday") as? String,
+                                    thursday: data.value(forKey: "thursday") as? String,
+                                    friday: data.value(forKey: "friday") as? String
+                                )
                             )
                             
                         }
