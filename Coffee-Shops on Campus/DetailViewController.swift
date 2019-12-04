@@ -52,7 +52,7 @@ class DetailViewController: UIViewController {
     }
     
     func populateCoffeeShopDetails(callback: @escaping () -> Void) {
-        if let url = URL(string: "https://dentistry.liverpool.ac.uk/_ajax/coffe/info/?id=\(aShop!.id)") {
+        if let url = URL(string: "https://dentistry.liverpool.ac.uk/_ajax/coffee/info/?id=\(aShop!.id)") {
             let session = URLSession.shared
             session.dataTask(with: url) { (data, response, err) in
                 guard let jsonData = data else {
@@ -64,9 +64,12 @@ class DetailViewController: UIViewController {
                     let aShopDetails = try decoder.decode(coffeeOnCampusDetails.self, from: jsonData)
                     self.aShop?.details = aShopDetails.data
                     
+                    // fetch coffee shop record from core data
                     let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CoffeeShops")
                     fetchRequest.predicate = NSPredicate(format: "id = %@", self.aShop!.id)
                     fetchRequest.returnsObjectsAsFaults = false
+                    
+                    // update coffee shop details
                     do {
                         let results = try self.context!.fetch(fetchRequest) as? [NSManagedObject]
                         if results?.count != 0 {
@@ -80,9 +83,10 @@ class DetailViewController: UIViewController {
                             results?[0].setValue(aShopDetails.data.opening_hours.friday, forKey: "friday")
                         }
                     } catch {
-                        print("Fetch Failed: \(error)")
+                        print("Error fetching coffee shop details from core data")
                     }
                     
+                    // save updated details to core data
                     do {
                         try self.context!.save()
                     } catch {
@@ -91,12 +95,14 @@ class DetailViewController: UIViewController {
                 } catch let jsonErr {
                     print("Error decoding JSON", jsonErr)
                     
-                    // retrieve coffee shops from core data if unable to decode JSON
+                    // fetch coffee shop record from core data if unable to decode JSON
+                    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CoffeeShops")
+                    fetchRequest.predicate = NSPredicate(format: "id = %@", self.aShop!.id)
+                    fetchRequest.returnsObjectsAsFaults = false
+                    
+                    // display coffee shop details
                     do {
-                        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "CoffeeShops")
-                        request.predicate = NSPredicate(format: "id = %@", self.aShop!.id)
-                        request.returnsObjectsAsFaults = false
-                        let result = try self.context!.fetch(request)
+                        let result = try self.context!.fetch(fetchRequest)
                         for data in result as! [NSManagedObject] {
                             self.aShop!.details = coffeeShopDetails(
                                 url: data.value(forKey: "url") as? String,
@@ -112,7 +118,7 @@ class DetailViewController: UIViewController {
                             )
                         }
                     } catch {
-                        print("Error retrieving coffee shops from core data")
+                        print("Error fetching coffee shop details from core data")
                     }
                 }
                 callback()

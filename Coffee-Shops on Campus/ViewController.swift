@@ -103,7 +103,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
     }
     
     func populateCoffeeShops(callback: @escaping () -> Void) {
-        if let url = URL(string: "https://dentistry.liverpool.ac.uk/_ajax/coffe/") {
+        if let url = URL(string: "https://dentistry.liverpool.ac.uk/_ajax/coffee/") {
             let session = URLSession.shared
             session.dataTask(with: url) { (data, response, err) in
                 guard let jsonData = data else {
