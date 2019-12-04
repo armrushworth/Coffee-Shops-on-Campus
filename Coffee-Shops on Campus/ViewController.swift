@@ -41,7 +41,7 @@ struct coffeeOnCampus: Decodable {
 }
 
 struct coffeeShopDetails: Decodable {
-    let url: String
+    let url: String?
     let photo_url: String?
     let phone_number: String?
     let opening_hours: openingHours
@@ -103,7 +103,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
     }
     
     func populateCoffeeShops(callback: @escaping () -> Void) {
-        if let url = URL(string: "https://dentistry.liverpool.ac.uk/_ajax/coffee/") {
+        if let url = URL(string: "https://dentistry.liverpool.ac.uk/_ajax/coffe/") {
             let session = URLSession.shared
             session.dataTask(with: url) { (data, response, err) in
                 guard let jsonData = data else {
@@ -114,13 +114,14 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
                     let decoder = JSONDecoder()
                     let shops = try decoder.decode(coffeeOnCampus.self, from: jsonData)
                     
+                    // add coffee shops to core data on first run
+                    let request = NSFetchRequest<NSFetchRequestResult>(entityName: "CoffeeShops")
+                    let count = try self.context!.count(for: request)
+                    
                     for aShop in shops.data {
                         // add coffee shops to array
                         self.coffeeShops.append(aShop)
                         
-                        // add coffee shops to core data on first run
-                        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "CoffeeShops")
-                        let count = try self.context!.count(for: request)
                         if (count == 0) {
                             let entity = NSEntityDescription.entity(forEntityName: "CoffeeShops", in: self.context!)
                             let newItem = NSManagedObject(entity: entity!, insertInto: self.context)
