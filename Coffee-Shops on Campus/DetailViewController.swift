@@ -16,6 +16,7 @@ class DetailViewController: UIViewController {
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var openingTimesLabel: UILabel!
+    @IBOutlet weak var phoneLabel: UILabel!
     @IBOutlet weak var websiteButton: UIButton!
     
     // show coffee shop website button if a url is present
@@ -51,6 +52,7 @@ class DetailViewController: UIViewController {
                 
                 self.nameLabel.text = self.aShop?.name
                 self.openingTimesLabel.text = "Monday: \(self.aShop?.details?.opening_hours.monday ?? "")\nTuesday: \(self.aShop?.details?.opening_hours.tuesday ?? "")\nWednesday: \(self.aShop?.details?.opening_hours.wednesday ?? "")\nThursday: \(self.aShop?.details?.opening_hours.thursday ?? "")\nFriday: \(self.aShop?.details?.opening_hours.friday ?? "")"
+                self.phoneLabel.text = "Phone: \(self.aShop?.details?.phone_number ?? "")"
                 if (!(self.aShop?.details?.url?.isEmpty ?? true)) {
                     self.websiteButton.isHidden = false
                 }
