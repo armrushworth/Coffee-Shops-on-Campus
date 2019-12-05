@@ -33,6 +33,7 @@ class DetailViewController: UIViewController {
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var context: NSManagedObjectContext?
     
+    // coffee shop object
     var aShop: coffeeShop?
         
     override func viewDidLoad() {
@@ -42,6 +43,7 @@ class DetailViewController: UIViewController {
         context = appDelegate.persistentContainer.viewContext
         populateCoffeeShopDetails() {
             DispatchQueue.main.async {
+                // display image if present, otherwise display default image
                 if (self.aShop?.details?.photo_url?.isEmpty ?? true) {
                     self.imageView.image = UIImage(named: "no-image")
                 } else {
@@ -50,9 +52,12 @@ class DetailViewController: UIViewController {
                     self.imageView.image = UIImage(data: imageData)
                 }
                 
+                // display coffee shops details in relevant labels
                 self.nameLabel.text = self.aShop?.name
                 self.openingTimesLabel.text = "Monday: \(self.aShop?.details?.opening_hours.monday ?? "")\nTuesday: \(self.aShop?.details?.opening_hours.tuesday ?? "")\nWednesday: \(self.aShop?.details?.opening_hours.wednesday ?? "")\nThursday: \(self.aShop?.details?.opening_hours.thursday ?? "")\nFriday: \(self.aShop?.details?.opening_hours.friday ?? "")"
                 self.phoneLabel.text = "Phone: \(self.aShop?.details?.phone_number ?? "")"
+                
+                // display visit website button if url is present
                 if (!(self.aShop?.details?.url?.isEmpty ?? true)) {
                     self.websiteButton.isHidden = false
                 }
@@ -60,10 +65,13 @@ class DetailViewController: UIViewController {
         }
     }
     
+    // populate coffee shop details for the coffee shop object
     func populateCoffeeShopDetails(callback: @escaping () -> Void) {
+        // check network reachability
         var flags = SCNetworkReachabilityFlags()
         SCNetworkReachabilityGetFlags(self.reachability!, &flags)
         
+        // retrieve coffee shop details from URL if network is available
         if (isNetworkReachable(with: flags)) {
             if let url = URL(string: "https://dentistry.liverpool.ac.uk/_ajax/coffee/info/?id=\(aShop!.id)") {
                 let session = URLSession.shared
@@ -82,7 +90,7 @@ class DetailViewController: UIViewController {
                         fetchRequest.predicate = NSPredicate(format: "id = %@", self.aShop!.id)
                         fetchRequest.returnsObjectsAsFaults = false
                         
-                        // update coffee shop details
+                        // update coffee shop details in core data
                         do {
                             let results = try self.context!.fetch(fetchRequest) as? [NSManagedObject]
                             if results?.count != 0 {
@@ -111,13 +119,14 @@ class DetailViewController: UIViewController {
                     callback()
                 }.resume()
             }
+            
+        // retrieve coffee shops details from core data if network is unreachable
         } else if (!isNetworkReachable(with: flags)) {
-            // fetch coffee shop record from core data if unable to decode JSON
             let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CoffeeShops")
             fetchRequest.predicate = NSPredicate(format: "id = %@", self.aShop!.id)
             fetchRequest.returnsObjectsAsFaults = false
             
-            // display coffee shop details
+            // add coffee shop details to object
             do {
                 let result = try self.context!.fetch(fetchRequest)
                 for data in result as! [NSManagedObject] {

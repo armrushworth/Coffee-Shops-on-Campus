@@ -116,6 +116,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
         mapView.reloadInputViews()
     }
     
+    // populate the coffee shops array
     func populateCoffeeShops(callback: @escaping () -> Void) {
         // check network reachability
         var flags = SCNetworkReachabilityFlags()
