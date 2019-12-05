@@ -9,7 +9,18 @@
 import CoreData
 import CoreLocation
 import MapKit
+import SystemConfiguration
 import UIKit
+
+struct coffeeOnCampus: Decodable {
+    let data: [coffeeShop]
+    let code: Int
+}
+
+struct coffeeOnCampusDetails: Decodable {
+    let data: coffeeShopDetails
+    let code: Int
+}
 
 struct coffeeShop: Decodable {
     let id: String
@@ -35,21 +46,11 @@ struct coffeeShop: Decodable {
     }
 }
 
-struct coffeeOnCampus: Decodable {
-    let data: [coffeeShop]
-    let code: Int
-}
-
 struct coffeeShopDetails: Decodable {
     let url: String?
     let photo_url: String?
     let phone_number: String?
     let opening_hours: openingHours
-}
-
-struct coffeeOnCampusDetails: Decodable {
-    let data: coffeeShopDetails
-    let code: Int
 }
 
 struct openingHours: Decodable {
@@ -60,11 +61,18 @@ struct openingHours: Decodable {
     let friday: String?
 }
 
+class MyPointAnnotation : MKPointAnnotation {
+    var id: String?
+}
+
 class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpdating, MKMapViewDelegate, CLLocationManagerDelegate, UITableViewDataSource, UITableViewDelegate {
     
     // outlets
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var mapView: MKMapView!
+    
+    // network reachability
+    let reachability = SCNetworkReachabilityCreateWithName(nil, "https://dentistry.liverpool.ac.uk/_ajax/coffee/")
     
     // location manager
     let locationManager = CLLocationManager()
@@ -95,67 +103,135 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
         navigationItem.searchController = searchController
         definesPresentationContext = true
         
-        // populate coffee shops array
+        // populate coffee shops array and load the map
         context = appDelegate.persistentContainer.viewContext
         populateCoffeeShops() {
             self.loadMap()
         }
     }
     
+    // reload the table and map when the view appears
+    override func viewDidAppear(_ animated: Bool) {
+        tableView.reloadData()
+        mapView.reloadInputViews()
+    }
+    
     func populateCoffeeShops(callback: @escaping () -> Void) {
-        if let url = URL(string: "https://dentistry.liverpool.ac.uk/_ajax/coffee/") {
-            let session = URLSession.shared
-            session.dataTask(with: url) { (data, response, err) in
-                guard let jsonData = data else {
-                    return
-                }
-                do {
-                    // decode JSON
-                    let decoder = JSONDecoder()
-                    let shops = try decoder.decode(coffeeOnCampus.self, from: jsonData)
-                    
-                    // add coffee shops to core data on first run
-                    let request = NSFetchRequest<NSFetchRequestResult>(entityName: "CoffeeShops")
-                    let count = try self.context!.count(for: request)
-                    
-                    for aShop in shops.data {
-                        // add coffee shops to array
-                        self.coffeeShops.append(aShop)
+        // check network reachability
+        var flags = SCNetworkReachabilityFlags()
+        SCNetworkReachabilityGetFlags(self.reachability!, &flags)
+        
+        // retrieve coffee shops from URL if network is available
+        if (isNetworkReachable(with: flags)) {
+            if let url = URL(string: "https://dentistry.liverpool.ac.uk/_ajax/coffee/") {
+                let session = URLSession.shared
+                session.dataTask(with: url) { (data, response, err) in
+                    guard let jsonData = data else {
+                        return
+                    }
+                    do {
+                        // decode JSON
+                        let decoder = JSONDecoder()
+                        let shops = try decoder.decode(coffeeOnCampus.self, from: jsonData)
                         
-                        if (count == 0) {
-                            let entity = NSEntityDescription.entity(forEntityName: "CoffeeShops", in: self.context!)
-                            let newItem = NSManagedObject(entity: entity!, insertInto: self.context)
-                            newItem.setValue(aShop.id, forKey: "id")
-                            newItem.setValue(aShop.name, forKey: "name")
-                            newItem.setValue(aShop.latitude, forKey: "latitude")
-                            newItem.setValue(aShop.longitude, forKey: "longitude")
-                            do {
-                                try self.context!.save()
-                            } catch {
-                                print("Error saving coffee shops to core data")
+                        // check if coffee shops already exist within core data
+                        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "CoffeeShops")
+                        let count = try self.context!.count(for: request)
+                        
+                        for aShop in shops.data {
+                            // add coffee shops to array
+                            self.coffeeShops.append(aShop)
+                            
+                            // add coffee shops to core data
+                            if (count == 0) {
+                                let entity = NSEntityDescription.entity(forEntityName: "CoffeeShops", in: self.context!)
+                                let newItem = NSManagedObject(entity: entity!, insertInto: self.context)
+                                newItem.setValue(aShop.id, forKey: "id")
+                                newItem.setValue(aShop.name, forKey: "name")
+                                newItem.setValue(aShop.latitude, forKey: "latitude")
+                                newItem.setValue(aShop.longitude, forKey: "longitude")
+                                do {
+                                    try self.context!.save()
+                                } catch {
+                                    print("Error saving coffee shops to core data")
+                                }
                             }
                         }
+                        self.sortCoffeeShops()
+                    } catch let jsonErr {
+                        print("Error decoding JSON", jsonErr)
                     }
-                    self.sortCoffeeShops()
-                } catch let jsonErr {
-                    print("Error decoding JSON", jsonErr)
-                    
-                    // retrieve coffee shops from core data if unable to decode JSON
-                    do {
-                        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "CoffeeShops")
-                        request.returnsObjectsAsFaults = false
-                        let result = try self.context!.fetch(request)
-                        for data in result as! [NSManagedObject] {
-                            self.coffeeShops.append(coffeeShop(id: data.value(forKey: "id") as! String, name: data.value(forKey: "name") as! String, latitude: data.value(forKey: "latitude") as! String, longitude: data.value(forKey: "longitude") as! String))
-                        }
-                    } catch {
-                        print("Error retrieving coffee shops from core data")
-                    }
+                    callback()
+                }.resume()
+            }
+            
+        // retrieve coffee shops from core data if network is unreachable
+        } else if (!isNetworkReachable(with: flags)) {
+            do {
+                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CoffeeShops")
+                fetchRequest.returnsObjectsAsFaults = false
+                
+                // add coffee shops to array
+                let results = try self.context!.fetch(fetchRequest)
+                for data in results as! [NSManagedObject] {
+                    self.coffeeShops.append(coffeeShop(
+                        id: data.value(forKey: "id") as! String,
+                        name: data.value(forKey: "name") as! String,
+                        latitude: data.value(forKey: "latitude") as! String,
+                        longitude: data.value(forKey: "longitude") as! String))
                 }
-                callback()
-            }.resume()
+            } catch {
+                print("Error retrieving coffee shops from core data")
+            }
+            callback()
         }
     }
+    
+    // check if network is reachable
+    func isNetworkReachable (with flags: SCNetworkReachabilityFlags)
+        -> Bool {
+            let isReachable = flags.contains (.reachable)
+            let needsConnection = flags.contains (.connectionRequired)
+            let canConnectAutomaticaly = flags.contains(.connectionOnDemand) || flags.contains(.connectionOnTraffic)
+            let canConnectWithoutUserInteraction = canConnectAutomaticaly && !flags.contains(.interventionRequired)
+            return isReachable && (!needsConnection || canConnectWithoutUserInteraction)
+    }
+    
+    // segue to the details view, passing the coffee shop object as a parameter
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "toDetailView" {
+            let secondViewController = segue.destination as! DetailViewController
+            secondViewController.aShop = coffeeShops.first(where: { $0.id == selectedCoffeeShopId })
+        }
+    }
+    
+    // MARK: - Location
+    
+    // get the updated location of the user
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        locationOfUser = locations[0] // get the first location (ignore any others)
+        let latitude = locationOfUser.coordinate.latitude
+        let longitude = locationOfUser.coordinate.longitude
+        let latDelta: CLLocationDegrees = 0.002
+        let lonDelta: CLLocationDegrees = 0.002
+        let span = MKCoordinateSpan(latitudeDelta: latDelta, longitudeDelta: lonDelta)
+        let location = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        let region = MKCoordinateRegion(center: location, span: span)
+        self.mapView.setRegion(region, animated: true)
+        sortCoffeeShops()
+    }
+    
+    // sort coffee shops in order of proximity to the location of the user
+    func sortCoffeeShops(){
+        DispatchQueue.main.async {
+            self.coffeeShops.sort(by: {
+                $0.distance(to: self.locationOfUser) < $1.distance(to: self.locationOfUser)
+            })
+            self.tableView.reloadData()
+        }
+    }
+    
+    // MARK: - Map View
     
     func loadMap() {
         // set up the map
@@ -170,24 +246,29 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
             guard let longitude = Double(aShop.longitude) else { return }
             let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
                 
-            let annotation = MKPointAnnotation()
+            let annotation = MyPointAnnotation()
             annotation.coordinate = coordinate
             annotation.title = aShop.name
+            annotation.id = aShop.id
             self.mapView.addAnnotation(annotation)
         }
     }
     
-    // reload the table and map when the view appears
-    override func viewDidAppear(_ animated: Bool) {
-        tableView.reloadData()
-        mapView.reloadInputViews()
+    // navigate to the details of the coffee shop selected in the map
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        guard let annotation = view.annotation as? MyPointAnnotation else { return }
+        selectedCoffeeShopId = annotation.id!
+        performSegue(withIdentifier: "toDetailView", sender: nil)
     }
+    
+    // MARK: - Table View
     
     // determine the number of rows in each table section
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return isFiltering() ? filteredCoffeeShops.count : coffeeShops.count
     }
     
+    // determine the content of each cell
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "myCell")
         cell.textLabel?.text = isFiltering() ? filteredCoffeeShops[indexPath.row].name : coffeeShops[indexPath.row].name
@@ -197,18 +278,14 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
         return cell
     }
     
+    // navigate to the details of the coffee shop selected in the table
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         currentCell = indexPath.row
         selectedCoffeeShopId = coffeeShops[currentCell].id
         performSegue(withIdentifier: "toDetailView", sender: nil)
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "toDetailView" {
-            let secondViewController = segue.destination as! DetailViewController
-            secondViewController.aShop = coffeeShops.first(where: { $0.id == selectedCoffeeShopId })
-        }
-    }
+    // MARK: - Searching
     
     // filter coffee shops by the string entered in the search bar
     func updateSearchResults(for searchController: UISearchController) {
@@ -221,29 +298,5 @@ class ViewController: UIViewController, UISearchBarDelegate, UISearchResultsUpda
     // determine if the user is filtering the table using the search bar
     func isFiltering() -> Bool {
         return searchController.isActive && !(searchController.searchBar.text?.isEmpty ?? true)
-    }
-    
-    // sort coffee shops in order of proximity to the location of the user
-    func sortCoffeeShops(){
-        DispatchQueue.main.async {
-            self.coffeeShops.sort(by: {
-                $0.distance(to: self.locationOfUser) < $1.distance(to: self.locationOfUser)
-            })
-            self.tableView.reloadData()
-        }
-    }
-    
-    // get the updated location of the user
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        locationOfUser = locations[0] // get the first location (ignore any others)
-        let latitude = locationOfUser.coordinate.latitude
-        let longitude = locationOfUser.coordinate.longitude
-        let latDelta: CLLocationDegrees = 0.002
-        let lonDelta: CLLocationDegrees = 0.002
-        let span = MKCoordinateSpan(latitudeDelta: latDelta, longitudeDelta: lonDelta)
-        let location = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-        let region = MKCoordinateRegion(center: location, span: span)
-        self.mapView.setRegion(region, animated: true)
-        sortCoffeeShops()
     }
 }
