@@ -1,4 +1,4 @@
-# COMP327 Assignment 2
+# COMP327 Assignment 2 - 98%
 
 ### Developing a “Coffee-Shops on Campus” App.
 
@@ -32,10 +32,3 @@ Your application is required to have the following basic features **(worth 70%):
 1. A search box allows the user to filter the items displayed in the table. **(worth 5%)**
 2. Caching the coffee-shop information (in Core Data) on first run of the app. On subsequent runs, if no data connection is available, retrieve and display the information from Core Data. **(worth 10%)**
 3. Implement an alternative layout in landscape view, e.g. the map displayed on the left and the table of coffee-shops displayed on the right. **(worth 10%)**
-
-Please ensure that your code is appropriately commented and meaningful class, variable and constant names are used **(worth 5%).**
-
-If you use any additional images or other materials, ensure that these are copied into the project – not just referenced somewhere else in your filestore. The zipped folder that you submit should include everything required to compile and run your App.
-
-**Important - Please note:**
-Do not use any third party frameworks in your App (e.g. Alamofire). Use Apple standard frameworks ONLY. Using a nonstandard framework will incur a **penalty of 20%.**
